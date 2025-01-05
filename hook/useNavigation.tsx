@@ -1,9 +1,12 @@
+import { api } from "@/convex/_generated/api";
+import { useQuery } from "convex/react";
 import { BookUser, Inbox } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 
 export const useNavigation = () => {
   const pathName = usePathname();
+  const requestCount = useQuery(api.requests.count);
 
   const paths = useMemo(
     () => [
@@ -18,9 +21,10 @@ export const useNavigation = () => {
         href: "/contracts",
         icon: <BookUser />,
         active: pathName === "/contracts",
+        count: requestCount,
       },
     ],
-    [pathName]
+    [pathName, requestCount]
   );
 
   return paths;

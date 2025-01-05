@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ThemaToggleButton } from "@/components/ui/theme-toggle-button";
@@ -21,6 +22,9 @@ const DesktopNav = () => {
               <li key={id} className="relative">
                 <Link href={path.href}>
                   <Tooltip>
+                    {path.count? <Badge className="absolute left-6 bottom-7 px-2">
+                      {path.count}
+                    </Badge> : null}
                     <TooltipTrigger asChild>
                       <div>
                         <Button
