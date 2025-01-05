@@ -10,9 +10,11 @@ type Props = {
   id: Id<"chats">;
   imageurl?: string;
   username?: string;
+  lastMessageSenders?: string;
+  lastMessageContent?: string;
 };
 
-function DMChatItem({ id, imageurl, username }: Props) {
+function DMChatItem({ id, imageurl, username, lastMessageSenders, lastMessageContent }: Props) {
   return (
     <Link href={`/chats/${id}`} className="w-full">
       <Card className="p-2 flex flex-row items-center gap-4 truncate">
@@ -25,7 +27,19 @@ function DMChatItem({ id, imageurl, username }: Props) {
           </Avatar>
           <div className="flex flex-col truncate">
             <h4 className="truncate">{username}</h4>
-            <p className="text-xs text-muted-foreground truncate">Start the chat</p>
+            {lastMessageSenders && lastMessageContent ? (
+              <span className="text-sm text-muted-foreground flex truncate overflow-ellipsis">
+                <p className="font-semibold">
+                  {lastMessageSenders}
+                  {":"}&nbsp;
+                </p>
+                <p className="truncate overflow-ellipsis">{lastMessageContent}</p>
+              </span>
+            ) : (
+              <p className="text-xs text-muted-foreground truncate">
+                Start the chat
+              </p>
+            )}
           </div>
         </div>
       </Card>

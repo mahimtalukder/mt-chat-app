@@ -1,11 +1,41 @@
-import React from 'react'
+"use client";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { useChat } from "@/hook/useChat";
+import { useQuery } from "convex/react";
+import React from "react";
+import Message from "./Message";
 
-type Props = {}
+type Props = {};
 
 const Body = (props: Props) => {
-  return (
-    <div className="flex-1 w-full flex overflow-y-scroll flex-col-reverse gap-2 p-3 no-scrollbar">Body</div>
-  )
-}
+  const { chatId } = useChat();
 
-export default Body
+  const messages = useQuery(api.messages.get, { id: chatId as Id<"chats"> });
+
+  return (
+    <div className="flex-1 w-full flex overflow-y-scroll flex-col-reverse gap-2 p-3 no-scrollbar">
+      {messages?.map(
+        ({ message, senderImage, sendarName, isCurrentUser }, index) => {
+          const lastByUser =
+            messages[index - 1]?.message.senderId ===
+            messages[index].message.senderId;
+          return (
+            <Message
+              key={message._id}
+              fromCurentUser={isCurrentUser}
+              senderImage={senderImage}
+              senderName={sendarName}
+              lastByUser={lastByUser}
+              content={message.content}
+              createdAt={message._creationTime}
+              type={message.type}
+            />
+          );
+        }
+      )}
+    </div>
+  );
+};
+
+export default Body;
