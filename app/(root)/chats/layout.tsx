@@ -5,6 +5,8 @@ import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import React from "react";
 import DMChatItem from "./_components/DMChatItem";
+import CreateGroupDialog from "./_components/CreateGroupDialog";
+import GroupChatItem from "./_components/GroupChatItem";
 
 type Props = React.PropsWithChildren<{}>;
 
@@ -12,7 +14,7 @@ const chatsLayout = ({ children }: Props) => {
   const chats = useQuery(api.chats.get);
   return (
     <>
-      <ChatItemList title="Chats">
+      <ChatItemList title="Chats" action={<CreateGroupDialog />}>
         {chats ? (
           chats.length === 0 ? (
             <p className="h-full w-full flex items-center justify-center">
@@ -20,7 +22,15 @@ const chatsLayout = ({ children }: Props) => {
             </p>
           ) : (
             chats.map((chat) => {
-              return chat.chat.isGroup ? null : (
+              return chat.chat.isGroup ? (
+                <GroupChatItem
+                  key={chat.chat._id}
+                  id={chat.chat._id}
+                  name={chat.chat.name || ""}
+                  lastMessageContent={chat.lastMessage?.content}
+                  lastMessageSenders={chat.lastMessage?.sender}
+                />
+              ) : (
                 <DMChatItem
                   key={chat.chat._id}
                   id={chat.chat._id}

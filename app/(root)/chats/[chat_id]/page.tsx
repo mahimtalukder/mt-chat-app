@@ -10,6 +10,8 @@ import Header from "./_components/Header";
 import Body from "./_components/body/Body";
 import ChatInput from "./_components/input/ChatInput";
 import RemoveContactDialog from "./_components/dialogs/RemoveContactDialog";
+import DeleteGrpupDialog from "./_components/dialogs/DeleteGrpupDialog";
+import LeaveGroupDialog from "./_components/dialogs/LeaveGroupDialog";
 
 type Props = {
   params: Promise<{ chat_id: Id<"chats"> }>; // params is a Promise
@@ -41,9 +43,19 @@ function ChatPage({ params }: Props) {
           open={removeContactDialog}
           setOpen={setRemoveContactDialog}
         />
+        <DeleteGrpupDialog
+          chatId={chat_id}
+          open={deleteGroupDialog}
+          setOpen={setDeleteGroupDialog}
+        />
+        <LeaveGroupDialog
+          chatId={chat_id}
+          open={leaveGroupDialog}
+          setOpen={setLeaveGroupDialog}
+        />
         <Header
-          imageUrl={chat.isGroup ? undefined : chat.otherMember.imageurl || ""}
-          name={chat.isGroup ? chat.name : chat.otherMember.username || ""}
+          imageUrl={chat.isGroup ? undefined : chat.otherMember?.imageurl || ""}
+          name={chat.isGroup ? chat.name : chat.otherMember?.username || ""}
           options={
             chat.isGroup
               ? [

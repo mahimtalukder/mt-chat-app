@@ -43,7 +43,7 @@ function Message({
             "rounded-br-none": !lastByUser && fromCurentUser,
             "rounded-bl-none": !lastByUser && !fromCurentUser,
         })}>
-            {type === "text" ? <p className="text-wrap break-words whitespace-pre-wrap">{content}</p> : null}
+            {type === "text" ? <p className="text-wrap break-words whitespace-pre-wrap break-all">{content}</p> : null}
             <p className={cn("text-xs w-full my-1",{
                 "text-primary-foreground justify-end": fromCurentUser,
                 "text-secondary-foreground justify-start": !fromCurentUser,
