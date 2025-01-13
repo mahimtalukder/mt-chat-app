@@ -85,7 +85,17 @@ function ChatPage({ params }: Props) {
                 ]
           }
         />
-        <Body />
+        <Body
+          members={
+            chat.isGroup
+              ? chat.otherMembers
+                ? chat.otherMembers
+                : []
+              : chat.otherMember
+                ? [chat.otherMember]
+                : []
+          }
+        />
         <ChatInput />
       </ChatContainer>
     </>

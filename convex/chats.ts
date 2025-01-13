@@ -3,7 +3,6 @@ import { MutationCtx, query, QueryCtx } from "./_generated/server";
 import { getUserByClerkId } from "./_utils";
 import { Id } from "./_generated/dataModel";
 
-
 export const get = query({
   args: {},
   handler: async (ctx) => {
@@ -37,7 +36,7 @@ export const get = query({
     );
 
     const chatWithDetails = await Promise.all(
-      chats?.map(async (chat) => {
+      chats?.map(async (chat, index) => {
         const allChatMemberships = await ctx.db
           .query("chatMembers")
           .withIndex("by_chatId", (q) => q.eq("chatId", chat?._id))
@@ -48,15 +47,35 @@ export const get = query({
           id: chat.lastMessageId,
         });
 
+        const lastSeenMessage = chatMemberships[index].lastSeenMessage
+          ? await ctx.db.get(chatMemberships[index].lastSeenMessage!)
+          : null;
+
+        const lastSeenMessageTime = lastSeenMessage
+          ? lastSeenMessage._creationTime
+          : -1;
+
+        const unseenMessages = await ctx.db
+          .query("messages")
+          .withIndex("by_chatId", (q) => q.eq("chatId", chat._id))
+          .filter((q) => q.gt(q.field("_creationTime"), lastSeenMessageTime))
+          .filter((q) => q.neq(q.field("senderId"), currentUser._id))
+          .collect();
+
         if (chat.isGroup) {
-          return { chat, lastMessage };
+          return { chat, lastMessage, unseenCount: unseenMessages.length };
         } else {
           const otherMemberships = allChatMemberships.filter(
             (membership) => membership.memberId !== currentUser._id
           )[0];
 
           const otherMembers = await ctx.db.get(otherMemberships.memberId);
-          return { chat, otherMembers, lastMessage };
+          return {
+            chat,
+            otherMembers,
+            lastMessage,
+            unseenCount: unseenMessages.length,
+          };
         }
       })
     );

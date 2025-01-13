@@ -10,6 +10,7 @@ type Props = {
   lastByUser: boolean;
   content: string[];
   createdAt: number;
+  seen?: React.ReactNode;
   type: string;
 };
 
@@ -20,6 +21,7 @@ function Message({
   lastByUser,
   content,
   createdAt,
+  seen,
   type,
 }: Props) {
   const formatTime = (timestamp: number) => {
@@ -49,6 +51,7 @@ function Message({
                 "text-secondary-foreground justify-start": !fromCurentUser,
             })}>{formatTime(createdAt)}</p>
         </div>
+        {seen}
       </div>
       <Avatar className={cn("relative w-8 h-8",{
         "order-2": fromCurentUser,

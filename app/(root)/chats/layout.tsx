@@ -29,6 +29,7 @@ const chatsLayout = ({ children }: Props) => {
                   name={chat.chat.name || ""}
                   lastMessageContent={chat.lastMessage?.content}
                   lastMessageSenders={chat.lastMessage?.sender}
+                  unseenCount={chat.unseenCount}
                 />
               ) : (
                 <DMChatItem
@@ -38,6 +39,7 @@ const chatsLayout = ({ children }: Props) => {
                   username={chat.otherMembers?.username || ""}
                   lastMessageContent={chat.lastMessage?.content}
                   lastMessageSenders={chat.lastMessage?.sender}
+                  unseenCount={chat.unseenCount}
                 />
               );
             })

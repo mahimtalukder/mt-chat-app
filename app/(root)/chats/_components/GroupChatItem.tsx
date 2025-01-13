@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Id } from "@/convex/_generated/dataModel";
 import { User } from "lucide-react";
@@ -10,6 +11,7 @@ type Props = {
   name?: string;
   lastMessageSenders?: string;
   lastMessageContent?: string;
+  unseenCount? : number;
 };
 
 function GroupChatItem({
@@ -17,10 +19,11 @@ function GroupChatItem({
   name,
   lastMessageSenders,
   lastMessageContent,
+  unseenCount,
 }: Props) {
   return (
     <Link href={`/chats/${id}`} className="w-full">
-      <Card className="p-2 flex flex-row items-center gap-4 truncate">
+      <Card className="p-2 flex flex-row items-center gap-4 truncate justify-between">
         <div className="flex items-center gap-4 truncate">
           <Avatar>
             <AvatarFallback>
@@ -46,6 +49,7 @@ function GroupChatItem({
             )}
           </div>
         </div>
+        {unseenCount ? <Badge>{unseenCount}</Badge> : null}
       </Card>
     </Link>
   );

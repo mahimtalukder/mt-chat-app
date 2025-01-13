@@ -1,4 +1,5 @@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { Id } from '@/convex/_generated/dataModel'
 import { AvatarImage } from '@radix-ui/react-avatar';
@@ -12,12 +13,13 @@ type Props = {
   username?: string;
   lastMessageSenders?: string;
   lastMessageContent?: string;
+  unseenCount?: number;
 };
 
-function DMChatItem({ id, imageurl, username, lastMessageSenders, lastMessageContent }: Props) {
+function DMChatItem({ id, imageurl, username, lastMessageSenders, lastMessageContent, unseenCount }: Props) {
   return (
     <Link href={`/chats/${id}`} className="w-full">
-      <Card className="p-2 flex flex-row items-center gap-4 truncate">
+      <Card className="p-2 flex flex-row items-center gap-4 truncate justify-between">
         <div className="flex items-center gap-4 truncate">
           <Avatar>
             <AvatarImage src={imageurl} alt={username} />
@@ -42,6 +44,7 @@ function DMChatItem({ id, imageurl, username, lastMessageSenders, lastMessageCon
             )}
           </div>
         </div>
+        {unseenCount ? <Badge>{unseenCount}</Badge>: null}
       </Card>
     </Link>
   );
