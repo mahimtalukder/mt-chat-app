@@ -12,13 +12,16 @@ import { useChat } from "@/hook/useChat";
 import { useMutationState } from "@/hook/useMutationState";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ConvexError } from "convex/values";
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import TextareaAutosize from "react-textarea-autosize";
 import { Button } from "@/components/ui/button";
 import { SendHorizonal } from "lucide-react";
+import MessageActionPopover from "./MessageActionPopover";
+import { useTheme } from "next-themes";
+import Emojipicker, {Theme} from "emoji-picker-react";
 
 const chatMessageSchema = z.object({
   content: z.string().min(1, { message: "This field cannot be empty" }),
@@ -26,6 +29,11 @@ const chatMessageSchema = z.object({
 
 function ChatInput() {
   const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
+  const emojiPickerRef = useRef<any>(null);
+
+  const [ emojiPickerOpen, setEmojiPickerOpen ] = useState(false);
+  const {theme} = useTheme();
+  const [ cursorPosition, setCursorPosition ] = useState(0);
 
   const { chatId } = useChat();
   const { mutate: CreateMessage, pending } = useMutationState(
@@ -37,6 +45,8 @@ function ChatInput() {
     defaultValues: { content: "" },
   });
 
+  const content = form.watch("content", "");
+
   const handleSubmit = async (values: z.infer<typeof chatMessageSchema>) => {
     CreateMessage({
       chatId,
@@ -45,6 +55,7 @@ function ChatInput() {
     })
       .then(() => {
         form.reset();
+        textAreaRef.current?.focus();
       })
       .catch((err) => {
         toast.error(
@@ -58,11 +69,45 @@ function ChatInput() {
 
     if (selectionStart !== null) {
       form.setValue("content", value);
+      setCursorPosition(selectionStart);
     }
   };
+
+  const insertEmoji = (emoji: string) => {
+    const newText = [
+      content.substring(0, cursorPosition),
+      emoji,
+      content.substring(cursorPosition),
+    ].join("")
+
+    form.setValue("content", newText);
+    setCursorPosition(cursorPosition + emoji.length);
+  }
+ 
+  useEffect(() => {
+    const handleClickOuside = (event: MouseEvent) => {
+      if(emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)){
+        setEmojiPickerOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOuside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOuside);
+    }
+  },[])
+
   return (
     <Card className="w-full p-2 rounded-lg relative">
+      <div className="absolute bottom-16" ref={emojiPickerRef}>
+        <Emojipicker open={emojiPickerOpen} theme={theme as Theme} onEmojiClick={(emojiDetails) => {
+          insertEmoji(emojiDetails.emoji)
+          setEmojiPickerOpen(false)
+          }} lazyLoadEmojis />
+      </div>
       <div className="flex gap-2 items-end w-full">
+        <MessageActionPopover setEmojiPickerOpen={setEmojiPickerOpen} />
         <Form {...form}>
           <form
             className="flex gap-2 items-end w-full"
