@@ -120,6 +120,10 @@ const getMessageContent = (type: string, content: string) => {
   switch (type) {
     case "text":
       return content;
+    case "image":
+      return "[Image]";
+    case "files":
+      return "[Files]";
     default:
       return "[Non-text]";
   }
